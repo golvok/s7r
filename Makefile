@@ -10,7 +10,7 @@ INCLUDE_FLAGS = \
 
 CFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror
 
-s8n: main.o draw/window.o
+s8n: main.o draw/window.o sim/particle.o
 	g++ $^ -o $@ $(LINK_FLAGS)
 
 %.o: %.c++
