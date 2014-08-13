@@ -13,5 +13,5 @@ CFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror
 s8n: main.o draw/window.o sim/particle.o
 	g++ $^ -o $@ $(LINK_FLAGS)
 
-%.o: %.c++
-	g++ $(CFLAGS) -c $^ -o $@ $(INCLUDE_FLAGS)
+%.o: %.c++ %.h
+	g++ $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
