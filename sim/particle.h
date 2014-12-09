@@ -1,4 +1,5 @@
-// #include <vector>
+#ifndef PARTICLE_H
+#define PARTICLE_H
 
 struct Point {
 	static const int POSITIVE_DOT_PRODUCT = 0;
@@ -38,3 +39,5 @@ private:
 	Particle(const Particle&);
 	Particle& operator=(const Particle&);
 };
+
+#endif /* PARTICLE_H */
