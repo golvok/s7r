@@ -1,3 +1,6 @@
+#ifndef WINDOW_H
+#define WINDOW_H
+
 #include <gtk/gtk.h>
 
 class Window {
@@ -13,3 +16,5 @@ private:
 	Window& operator=(const Window&);
 	Window(const Window&);
 };
+
+#endif /* WINDOW_H */

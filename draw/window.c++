@@ -19,7 +19,7 @@ Window::Window(
 
 	gtk_window_set_position(     GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_window_set_default_size( GTK_WINDOW(window), width, height); 
-	gtk_window_set_title(        GTK_WINDOW(window), "Lines");
+	gtk_window_set_title(        GTK_WINDOW(window), "s8n");
 
 	gtk_container_add(GTK_CONTAINER (window), darea);
 	gtk_widget_show(darea);

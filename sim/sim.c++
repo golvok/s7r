@@ -1,9 +1,14 @@
 #include "sim.h"
 
-Sim::Sim() {
+Sim::Sim()
+	: particles()
+	, movers() {
 
 }
 
-Sim::update(size_t ticks) {
-
+bool Sim::update(size_t ticks) {
+	for (auto& m : movers) {
+		m.second.update(ticks);
+	}
+	return true;
 }

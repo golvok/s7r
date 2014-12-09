@@ -1,12 +1,181 @@
 #include "particle.h"
 #include "math.h"
 
-Point::Point(float x_, float y_) :
-	x(x_), y(y_) { }
+/******************************************
+ * begin Point function definitions *
+ ******************************************/
 
-void Point::set(float x, float y) {
-	this->x = x;
-	this->y = y;
+void Point::set(float _x, float _y) { x = _x; y = _y; }
+void Point::set(const Point& src) { x = src.x; y = src.y; }
+
+void Point::offset(float _x, float _y) {
+	x += _x;
+	y += _y;
+}
+
+Point Point::operator- (const Point& rhs) const {
+	Point result = *this;
+	result -= rhs;
+	return result;
+}
+
+Point Point::operator+ (const Point& rhs) const {
+	Point result = *this;
+	result += rhs;
+	return result;
+}
+
+Point Point::operator* (float rhs) const {
+	Point result = *this;
+	result *= rhs;
+	return result;
+}
+
+Point& Point::operator+= (const Point& rhs) {
+	this->x += rhs.x;
+	this->y += rhs.y;
+	return *this;
+}
+
+Point& Point::operator-= (const Point& rhs) {
+	this->x -= rhs.x;
+	this->y -= rhs.y;
+	return *this;
+}
+
+Point& Point::operator *= (float rhs) {
+	this->x *= rhs;
+	this->y *= rhs;
+	return *this;
+}
+
+Point& Point::operator= (const Point& src) {
+	this->x = src.x;
+	this->y = src.y;
+	return *this;
+}
+
+Point::Point() : x(0), y(0) { }
+
+Point::Point(const Point& src) :
+	x(src.x), y(src.y) {
+}
+
+Point::Point(float _x, float _y) : x(_x), y(_y) { }
+
+Point operator*(float lhs, const Point& rhs) {
+	return rhs*lhs;
+}
+
+/******************************************
+ * begin BoundBox function definitions *
+ ******************************************/
+
+const float& BoundBox::left() const { return bottom_left().x; }
+const float& BoundBox::right() const { return top_right().x; }
+const float& BoundBox::bottom() const { return bottom_left().y; }
+const float& BoundBox::top() const { return top_right().y; }
+const Point& BoundBox::bottom_left() const { return bottomleft; }
+const Point& BoundBox::top_right() const { return topright; }
+float& BoundBox::left() { return bottom_left().x; }
+float& BoundBox::right() { return top_right().x; }
+float& BoundBox::bottom() { return bottom_left().y; }
+float& BoundBox::top() { return top_right().y; }
+Point& BoundBox::bottom_left() { return bottomleft; }
+Point& BoundBox::top_right() { return topright; }
+
+float BoundBox::get_xcenter() const {
+	return (right() + left()) / 2;
+}
+
+float BoundBox::get_ycenter() const {
+	return (top() + bottom()) / 2;
+}
+
+Point BoundBox::get_center() const {
+	return Point(get_xcenter(), get_ycenter());
+}
+
+float BoundBox::get_width() const {
+	return right() - left();
+}
+
+float BoundBox::get_height() const {
+	return top() - bottom();
+}
+
+void BoundBox::offset(const Point& relative_to) {
+	this->bottomleft += relative_to;
+	this->topright += relative_to;
+}
+
+void BoundBox::offset(float by_x, float by_y) {
+	this->bottomleft.offset(by_x, by_y);
+	this->topright.offset(by_x, by_y);
+}
+
+bool BoundBox::intersects(const Point& test_pt) const {
+	return intersects(test_pt.x, test_pt.y);
+}
+
+bool BoundBox::intersects(float x, float y) const {
+	if (x < left() || right() < x || y < bottom() || top() < y) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+float BoundBox::area() const {
+	return fabs(get_width() * get_height());
+}
+
+BoundBox BoundBox::operator+ (const Point& rhs) const {
+	BoundBox result = *this;
+	result.offset(rhs);
+	return result;
+}
+
+BoundBox BoundBox::operator- (const Point& rhs) const {
+	BoundBox result = *this;
+	result.offset(Point(-rhs.x, -rhs.y));
+	return result;
+}
+
+BoundBox& BoundBox::operator+= (const Point& rhs) {
+	this->offset(rhs);
+	return *this;
+}
+
+BoundBox& BoundBox::operator-= (const Point& rhs) {
+	this->offset(Point(-rhs.x, -rhs.y));
+	return *this;
+}
+
+BoundBox& BoundBox::operator= (const BoundBox& src) {
+	this->bottom_left() = src.bottom_left();
+	this->top_right() = src.top_right();
+	return *this;
+}
+
+BoundBox::BoundBox() :
+	bottomleft(), topright() {
+}
+
+BoundBox::BoundBox(const BoundBox& src) :
+	bottomleft(src.bottom_left()), topright(src.top_right()) {
+}
+BoundBox::BoundBox(float _left, float _bottom, float _right, float _top) :
+	bottomleft(_left,_bottom), topright(_right,_top) {
+}
+
+BoundBox::BoundBox(const Point& _bottomleft, const Point& _topright) :
+	bottomleft(_bottomleft), topright(_topright) {
+}
+
+BoundBox::BoundBox(const Point& _bottomleft, float width, float height) :
+	bottomleft(_bottomleft) , topright(_bottomleft) {
+	topright.offset(width, height);
 }
 
 float Point::deltaX(Point p1, Point p2) {
@@ -102,8 +271,10 @@ Point Point::perpindictularDeltaVectorToLine(Point direction, Point p) {
 // 	return "(" + x + ',' + y + ')';
 // }
 
-void Particle::setPosition(float x, float y) {
-	this->position.set(x,y);
+
+
+void Particle::setPosition(const Point& p) {
+	this->position = p;
 }
 
 Point Particle::getPosition() {
