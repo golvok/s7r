@@ -1,18 +1,24 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <cairo/cairo.h>
 #include <gtk/gtk.h>
 
 class Window {
 public:
-	Window(size_t w, size_t h, GCallback draw_function);
-	void set_click_function(GCallback click_function);
+	Window(size_t w, size_t h, void* (*draw_function)(cairo_t*, void*), void* draw_function_data);
+	void set_click_function(void* (*click_function)(void*), void* data);
 	void loop();
+
+	void call_click_function();
+	void call_draw_function(cairo_t* cr);
 private:
-	GtkWidget *window;
-	GtkWidget *darea;
-	GCallback draw_function;
-	GCallback click_function;
+	GtkWidget* window;
+	GtkWidget* darea;
+	void* (*draw_function)(cairo_t*, void*);
+	void* draw_function_data;
+	void* (*click_function)(void*);
+	void* click_function_data;
 	Window& operator=(const Window&);
 	Window(const Window&);
 };
