@@ -1,29 +1,54 @@
 #include "sim/sim.h"
 #include "draw/window.h"
 
-#include <cairo/cairo.h>
-#include <gtk/gtk.h>
-
 #include <iostream>
 #include <memory>
 
-using namespace std;
+struct TestData {
+	Sim* sim;
+	Mover* m1;
+	Mover* m2;
+};
 
-static gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-
-static gboolean draw_window(GtkWidget *widget, cairo_t* cr, gpointer data) {
-	return FALSE;
-}
-
-int main () {
-	unique_ptr<Sim> sim = unique_ptr<Sim>(new Sim());
-	Window win(800, 600, G_CALLBACK(draw_window));
-	win.set_click_function( G_CALLBACK(clicked));
-	win.loop();
+void* clicked(void* data) {
+	(void)data;
+	// puts("clicked!");
+	static_cast<TestData*>(data)->sim->update(10);
+	puts("updated");
 	return 0;
 }
 
+void* draw_stuff(cairo_t* cr, void* data) {
+	TestData* td = static_cast<TestData*>(data);
+	cairo_set_source_rgb(cr, 0.00, 1.00, 0.00);
+	cairo_set_line_width(cr,1);
+	for (auto& p : td->m1->getTargets()) {
+		cairo_arc(cr, p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+		cairo_stroke(cr);
+	}
+	for (auto& p : td->m2->getTargets()) {
+		cairo_arc(cr, p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+		cairo_stroke(cr);
+	}
+	puts("drew");
+	return 0;
+}
 
-static gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	return TRUE;
+int main () {
+	TestData td;
+	td.sim = new Sim();
+	td.m1 = new Mover(5);
+	td.m2 = new Mover(10);
+
+	td.sim->add(*td.m1);
+	td.sim->add(*td.m2);
+
+	td.m1->addTarget(Particle({350,300},0));
+	td.m2->addTarget(Particle({400,300},1));
+	td.m1->addTarget(Particle({450,300},2));
+
+	Window win(800, 600, draw_stuff, &td);
+	win.set_click_function(clicked, &td);
+	win.loop();
+	return 0;
 }
