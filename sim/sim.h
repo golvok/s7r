@@ -13,23 +13,18 @@ namespace std {
 			return std::hash<size_t>()(p.getId());
 		}
 	};
-	template <> struct hash<Mover> {
-		size_t operator()(const Mover& m) const {
-			return std::hash<Particle>()(m.getTarget());
-		}
-	};
 }
 
 class Sim {
 public:
 	Sim();
 	bool update(size_t ticks);
-	void addParticle(Point p);
+	void add(Mover& m);
 private:
 	Sim& operator=(const Sim&);
 	Sim(const Sim&);
-	std::unordered_map<Particle::idtype,Particle> particles;
-	std::unordered_map<Particle::idtype,Mover> movers;
+	std::vector<Particle*> particles;
+	std::vector<Mover*> movers;
 };
 
 #endif /* SIM_H */

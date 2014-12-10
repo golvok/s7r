@@ -6,9 +6,15 @@ Sim::Sim()
 
 }
 
+void Sim::add(Mover& m) {
+	m.setSim(this);
+	movers.push_back(&m);
+}
+
 bool Sim::update(size_t ticks) {
+	puts("sim::update");
 	for (auto& m : movers) {
-		m.second.update(ticks);
+		m->update(ticks);
 	}
 	return true;
 }

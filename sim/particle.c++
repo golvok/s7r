@@ -277,6 +277,6 @@ void Particle::setPosition(const Point& p) {
 	this->position = p;
 }
 
-Point Particle::getPosition() {
+Point Particle::getPosition() const {
 	return position;
 }
