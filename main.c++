@@ -5,10 +5,26 @@
 #include <iostream>
 #include <memory>
 
+class SimpleMover : public Mover_Impl<Particle> {
+public:
+	SimpleMover(float speed_)
+		: Mover_Impl()
+		, speed(speed_) {}
+
+	void update(size_t ticks) override {
+		for(auto& target : targets) {
+			Point current_loc = target.getPosition();
+			target.setPosition(Point(current_loc.x, current_loc.y + ticks*speed));
+		}
+	}
+private:
+	float speed;
+};
+
 struct TestData {
 	Sim* sim;
-	Mover* m1;
-	Mover* m2;
+	SimpleMover* m1;
+	SimpleMover* m2;
 };
 
 void* clicked(void* data) {
@@ -44,8 +60,8 @@ public:
 int main () {
 	TestData td;
 	td.sim = new Sim();
-	td.m1 = new Mover(1);
-	td.m2 = new Mover(2);
+	td.m1 = new SimpleMover(1);
+	td.m2 = new SimpleMover(2);
 
 	td.sim->add(*td.m1);
 	td.sim->add(*td.m2);

@@ -9,32 +9,41 @@ class Sim;
 
 class Mover {
 public:
-	typedef std::vector<Particle> ParticleRefList;
-	Mover(float speed_)
-		: targets()
-		, speed(speed_)
-		, attached_sim(nullptr) {}
+	Mover()
+		: attached_sim(nullptr) {}
 
 	Mover(Mover&& src)
-		: targets(std::move(src.targets))
-		, speed(src.speed)
-		, attached_sim(src.attached_sim) {}
+		: attached_sim(src.attached_sim) {}
 
-	void update(size_t ticks);
-	const ParticleRefList& getTargets() {return targets;}
-	void addTarget(Particle&& p);
-private:
+	virtual void update(size_t ticks) {(void)ticks;}
+	virtual ~Mover() {}
+protected:
 	friend class Sim;
 
-	ParticleRefList targets;
-	// std::queue<Points> destinations;
-	float speed;
 	Sim* attached_sim;
 
 	void setSim(Sim* s) {attached_sim = s;}
 
 	Mover& operator=(const Mover&);
 	Mover(const Mover&);
+};
+
+template<class T>
+class Mover_Impl : public Mover {
+public:
+	typedef std::vector<T> TList;
+	Mover_Impl()
+		: targets() {}
+
+	Mover_Impl(Mover_Impl&& src)
+		: targets(std::move(src.targets)) {}
+
+	const TList& getTargets() {return targets;}
+	void addTarget(T&& p) {
+		targets.push_back(std::forward<T>(p));
+	}
+protected:
+	TList targets;
 };
 
 #endif /* MOVER_H */
