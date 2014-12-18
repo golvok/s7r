@@ -16,6 +16,7 @@ namespace std {
 }
 
 class Sim {
+	typedef std::vector<Particle*> ParticleList;
 public:
 	Sim();
 	bool update(size_t ticks);
@@ -23,7 +24,7 @@ public:
 private:
 	Sim& operator=(const Sim&);
 	Sim(const Sim&);
-	std::vector<Particle*> particles;
+	ParticleList particles;
 	std::vector<Mover*> movers;
 };
 

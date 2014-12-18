@@ -1,5 +1,6 @@
 #include "sim/sim.h"
 #include "draw/window.h"
+#include "util/common.h"
 
 #include <iostream>
 #include <memory>
@@ -13,32 +14,38 @@ struct TestData {
 void* clicked(void* data) {
 	(void)data;
 	// puts("clicked!");
-	static_cast<TestData*>(data)->sim->update(10);
+	static_cast<TestData*>(data)->sim->update(1);
 	puts("updated");
 	return 0;
 }
 
-void* draw_stuff(cairo_t* cr, void* data) {
-	TestData* td = static_cast<TestData*>(data);
-	cairo_set_source_rgb(cr, 0.00, 1.00, 0.00);
-	cairo_set_line_width(cr,1);
-	for (auto& p : td->m1->getTargets()) {
-		cairo_arc(cr, p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
-		cairo_stroke(cr);
+class S8NDrawer : public DrawerObject {
+	DECL_COPYCON_AND_ASSIGNOP(S8NDrawer)
+private:
+	TestData& td;
+public:
+	S8NDrawer(TestData& td_) : td(td_) {}
+
+	void draw() override {
+		cairo_set_source_rgb(getContext(), 0.00, 1.00, 0.00);
+		cairo_set_line_width(getContext(),1);
+		for (auto& p : td.m1->getTargets()) {
+			cairo_arc(getContext(), p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+			cairo_stroke(getContext());
+		}
+		for (auto& p : td.m2->getTargets()) {
+			cairo_arc(getContext(), p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+			cairo_stroke(getContext());
+		}
+		puts("drew");
 	}
-	for (auto& p : td->m2->getTargets()) {
-		cairo_arc(cr, p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
-		cairo_stroke(cr);
-	}
-	puts("drew");
-	return 0;
-}
+};
 
 int main () {
 	TestData td;
 	td.sim = new Sim();
-	td.m1 = new Mover(5);
-	td.m2 = new Mover(10);
+	td.m1 = new Mover(1);
+	td.m2 = new Mover(2);
 
 	td.sim->add(*td.m1);
 	td.sim->add(*td.m2);
@@ -47,7 +54,7 @@ int main () {
 	td.m2->addTarget(Particle({400,300},1));
 	td.m1->addTarget(Particle({450,300},2));
 
-	Window win(800, 600, draw_stuff, &td);
+	Window win(800, 600, new S8NDrawer(td));
 	win.set_click_function(clicked, &td);
 	win.loop();
 	return 0;

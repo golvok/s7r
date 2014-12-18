@@ -28,11 +28,10 @@ static gboolean clicked_callback(
 
 
 Window::Window(
-	size_t width, size_t height, void* (*draw_function_)(cairo_t*, void*), void* draw_func_data_
+	size_t width, size_t height, DrawerObject* drawer_
 	):	window(nullptr)
 	,	darea(nullptr)
-	,	draw_function(draw_function_)
-	,	draw_function_data(draw_func_data_)
+	,	drawer(drawer_)
 	,	click_function(nullptr)
 	,	click_function_data(nullptr) {
 
@@ -72,7 +71,7 @@ void Window::call_click_function() {
 }
 
 void Window::call_draw_function(cairo_t* cr) {
-	if (draw_function != nullptr) {
-		this->draw_function(cr,draw_function_data);
+	if (drawer != nullptr) {
+		drawer->doDrawing(cr);
 	}
 }
