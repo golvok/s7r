@@ -6,19 +6,33 @@
 #include <memory>
 
 class SimpleMover : public Mover_Impl<Particle> {
+	DECL_COPYCON_AND_ASSIGNOP(SimpleMover)
 public:
 	SimpleMover(float speed_)
 		: Mover_Impl()
-		, speed(speed_) {}
+		, speed(speed_)
+		, counter(0)
+		{}
 
 	void update(size_t ticks) override {
-		for(auto& target : targets) {
-			Point current_loc = target.getPosition();
-			target.setPosition(Point(current_loc.x, current_loc.y + ticks*speed));
+		counter += ticks;
+		if (counter < reset_at_count) {
+			for(auto& target : targets) {
+				Point current_loc = target.getPosition();
+				target.setPosition(Point(current_loc.x, current_loc.y + ticks*speed));
+			}
+		} else {
+			counter = 0;
+			for(auto& target : targets) {
+				Point current_loc = target.getPosition();
+				target.setPosition({current_loc.x, 300});
+			}
 		}
 	}
 private:
 	float speed;
+	unsigned int counter;
+	const unsigned int reset_at_count = 40;
 };
 
 struct TestData {
