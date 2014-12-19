@@ -18,14 +18,14 @@ public:
 		counter += ticks;
 		if (counter < reset_at_count) {
 			for(auto& target : targets) {
-				Point current_loc = target.getPosition();
-				target.setPosition(Point(current_loc.x, current_loc.y + ticks*speed));
+				Point current_loc = target->getPosition();
+				target->setPosition(Point(current_loc.x, current_loc.y + ticks*speed));
 			}
 		} else {
 			counter = 0;
 			for(auto& target : targets) {
-				Point current_loc = target.getPosition();
-				target.setPosition({current_loc.x, 300});
+				Point current_loc = target->getPosition();
+				target->setPosition({current_loc.x, 300});
 			}
 		}
 	}
@@ -60,11 +60,11 @@ public:
 		cairo_set_source_rgb(getContext(), 0.00, 1.00, 0.00);
 		cairo_set_line_width(getContext(),1);
 		for (auto& p : td.m1->getTargets()) {
-			cairo_arc(getContext(), p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
 			cairo_stroke(getContext());
 		}
 		for (auto& p : td.m2->getTargets()) {
-			cairo_arc(getContext(), p.getPosition().x, p.getPosition().y, 2, 0, 2*G_PI);
+			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
 			cairo_stroke(getContext());
 		}
 		puts("drew");

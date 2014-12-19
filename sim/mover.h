@@ -31,19 +31,19 @@ protected:
 template<class T>
 class Mover_Impl : public Mover {
 public:
-	typedef std::vector<T> TList;
+	typedef std::vector<T*> TPtrList;
 	Mover_Impl()
 		: targets() {}
 
 	Mover_Impl(Mover_Impl&& src)
 		: targets(std::move(src.targets)) {}
 
-	const TList& getTargets() {return targets;}
+	const TPtrList& getTargets() {return targets;}
 	void addTarget(T&& p) {
-		targets.push_back(std::forward<T>(p));
+		targets.push_back(new T(std::forward<T>(p)));
 	}
 protected:
-	TList targets;
+	TPtrList targets;
 };
 
 #endif /* MOVER_H */
