@@ -45,7 +45,6 @@ void* clicked(void* data) {
 	(void)data;
 	// puts("clicked!");
 	static_cast<TestData*>(data)->sim->update(1);
-	puts("updated");
 	return 0;
 }
 
@@ -67,7 +66,6 @@ public:
 			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
 			cairo_stroke(getContext());
 		}
-		puts("drew");
 	}
 };
 

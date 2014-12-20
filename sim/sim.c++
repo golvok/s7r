@@ -12,7 +12,7 @@ void Sim::add(Mover& m) {
 }
 
 bool Sim::update(size_t ticks) {
-	puts("sim::update");
+	std::cout << "sim::update(" << ticks << ")\n";
 	for (auto& m : movers) {
 		m->update(ticks);
 	}

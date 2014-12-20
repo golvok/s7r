@@ -6,8 +6,6 @@ static gboolean draw_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
 
 	Window* window = static_cast<Window*>(data);
 
-	puts("draw");
-
 	window->call_draw_function(cr);
 
 	return FALSE;

@@ -4,7 +4,6 @@
 #include "particle.h"
 #include "mover.h"
 
-#include <stdlib.h>
 #include <unordered_map>
 
 namespace std {
