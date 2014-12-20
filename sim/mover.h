@@ -4,6 +4,7 @@
 #include "particle.h"
 
 #include <vector>
+#include <algorithm>
 
 class Sim;
 
@@ -41,6 +42,11 @@ public:
 	const TPtrList& getTargets() {return targets;}
 	void addTarget(T&& p) {
 		targets.push_back(new T(std::forward<T>(p)));
+	}
+	void removeTarget(T& p_to_remove) {
+		targets.erase(
+			std::find(targets.begin(), targets.end(), &p_to_remove)
+		);
 	}
 protected:
 	TPtrList targets;

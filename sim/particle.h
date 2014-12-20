@@ -2,6 +2,7 @@
 #define PARTICLE_H
 
 #include <stdlib.h>
+#include <ostream>
 
 /**
  * A point datatype.
@@ -54,16 +55,17 @@ struct Point {
 	static float magnitudeSquared(Point p);
 	static Point unit(Point p);
 	static float dotProduct(Point p1, Point p2);
+	static Point getPerpindular(Point p);
 	static Point project(Point source, Point wall);
 	// static Point* farthestPoint(Point p, std::vector<Point> tests);
 	// static Point* farthestFromLineWithSides(Point p, Point q, std::vector<Point> tests);
 	static float distanceToLine(Point onLine_1, Point onLine_2, Point p);
 	static Point perpindictularDeltaVectorToLine(Point onLine_1, Point onLine_2, Point p);
 	static Point perpindictularDeltaVectorToLine(Point direction, Point p);
-
 };
 
 Point operator*(float lhs, const Point& rhs);
+std::ostream& operator<<(std::ostream& os, const Point& p);
 
 /**
  * Represents a rectangle, used as a bounding box.

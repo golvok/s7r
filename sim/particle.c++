@@ -67,6 +67,11 @@ Point operator*(float lhs, const Point& rhs) {
 	return rhs*lhs;
 }
 
+std::ostream& operator<<(std::ostream& os, const Point& p) {
+	os << '{' << p.x << ',' << p.y << '}';
+	return os;
+}
+
 /******************************************
  * begin BoundBox function definitions *
  ******************************************/
@@ -220,6 +225,10 @@ Point Point::unit(Point p) {
 
 float Point::dotProduct(Point p1, Point p2) {
 	return p1.x * p2.x + p1.y * p2.y;
+}
+
+Point Point::getPerpindular(Point p) {
+	return Point(p.y,-p.x);
 }
 
 Point Point::project(Point source, Point wall) {
