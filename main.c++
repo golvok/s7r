@@ -144,12 +144,12 @@ void* clicked(void* data) {
 	return 0;
 }
 
-class S8NDrawer : public DrawerObject {
-	DECL_COPYCON_AND_ASSIGNOP(S8NDrawer)
+class S7RDrawer : public DrawerObject {
+	DECL_COPYCON_AND_ASSIGNOP(S7RDrawer)
 private:
 	TestData& td;
 public:
-	S8NDrawer(TestData& td_) : td(td_) {}
+	S7RDrawer(TestData& td_) : td(td_) {}
 
 	void draw() override {
 		cairo_set_source_rgb(getContext(), 0.00, 1.00, 0.00);
@@ -204,7 +204,7 @@ int main () {
 	td.m2->addTarget(Particle({400,300},1));
 	td.m1->addTarget(Particle({450,300},2));
 
-	Window win(800, 600, new S8NDrawer(td));
+	Window win(800, 600, new S7RDrawer(td));
 	win.set_click_function(clicked, &td);
 	win.loop();
 	return 0;
