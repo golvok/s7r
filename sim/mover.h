@@ -4,6 +4,7 @@
 #include "particle.h"
 
 #include <vector>
+#include <unordered_set>
 #include <algorithm>
 
 class Sim;
@@ -29,27 +30,37 @@ protected:
 	Mover(const Mover&);
 };
 
-template<class T>
+template<class ParticleType>
 class Mover_Impl : public Mover {
 public:
-	typedef std::vector<T*> TPtrList;
+	typedef std::vector<ParticleType*> ParticlePtrList;
+	typedef std::unordered_set<ParticleType*> ParticlePtrSet;
 	Mover_Impl()
 		: targets() {}
 
 	Mover_Impl(Mover_Impl&& src)
 		: targets(std::move(src.targets)) {}
 
-	const TPtrList& getTargets() {return targets;}
-	void addTarget(T&& p) {
-		targets.push_back(new T(std::forward<T>(p)));
+	~Mover_Impl() {
+		while (targets.empty() == false) {
+			removeTarget(*targets.front());
+		}
 	}
-	void removeTarget(T& p_to_remove) {
+
+	const ParticlePtrList& getTargets() {return targets;}
+	void addTarget(ParticleType&& p) {
+		targets.push_back(new ParticleType(std::forward<ParticleType>(p)));
+	}
+	void removeTarget(ParticleType& p_to_remove) {
 		targets.erase(
 			std::find(targets.begin(), targets.end(), &p_to_remove)
 		);
+		delete &p_to_remove;
 	}
 protected:
-	TPtrList targets;
+	ParticlePtrList targets;
 };
+
+
 
 #endif /* MOVER_H */

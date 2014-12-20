@@ -101,7 +101,7 @@ public:
 				state = State::EXPLODING;
 			}
 		}
-		TPtrList dead;
+		ParticlePtrList dead;
 		for (auto& p : targets) {
 			p->addToAge(ticks);
 			if (p->isDead()) {
@@ -118,7 +118,6 @@ public:
 		}
 		for (auto& p : dead) {
 			removeTarget(*p);
-			delete p;
 		}
 		if (state == State::EXPLODING && targets.empty()) {
 			state = State::DONE;
@@ -169,7 +168,7 @@ public:
 	void drawFirework(Firework& f) {
 		switch (f.getState()) {
 			case Firework::State::FUSE_LIT:
-				cairo_set_source_rgb(getContext(), 1.00, 1.00, 0.00);
+				cairo_set_source_rgb(getContext(), 1.00, 0.70, 0.00);
 			break;
 			case Firework::State::EXPLODING:
 				cairo_set_source_rgb(getContext(), 1.00, 0.00, 0.00);
@@ -192,7 +191,7 @@ int main () {
 	td.sim = new Sim();
 	td.m1 = new SimpleMover(1);
 	td.m2 = new SimpleMover(2);
-	td.f1 = new Firework({100,250},20,{3,0});
+	td.f1 = new Firework({100,250},20,{7,0});
 	td.f2 = new Firework({100,350},30,{1,-1});
 
 	td.sim->add(*td.m1);
@@ -204,8 +203,15 @@ int main () {
 	td.m2->addTarget(Particle({400,300},1));
 	td.m1->addTarget(Particle({450,300},2));
 
-	Window win(800, 600, new S7RDrawer(td));
+	Window win(800, 600, std::unique_ptr<S7RDrawer>(new S7RDrawer(td)));
 	win.set_click_function(clicked, &td);
 	win.loop();
+
+	delete td.sim;
+	delete td.m1;
+	delete td.m2;
+	delete td.f1;
+	delete td.f2;
+
 	return 0;
 }

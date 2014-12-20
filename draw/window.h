@@ -3,6 +3,7 @@
 
 #include <cairo/cairo.h>
 #include <gtk/gtk.h>
+#include <memory>
 
 class DrawerObject {
 public:
@@ -24,7 +25,7 @@ private:
 
 class Window {
 public:
-	Window(size_t w, size_t h, DrawerObject* drawer);
+	Window(size_t w, size_t h, std::unique_ptr<DrawerObject>&& drawer);
 	void set_click_function(void* (*click_function)(void*), void* data);
 	void loop();
 
@@ -33,7 +34,7 @@ public:
 private:
 	GtkWidget* window;
 	GtkWidget* darea;
-	DrawerObject* drawer;
+	std::unique_ptr<DrawerObject> drawer;
 	void* (*click_function)(void*);
 	void* click_function_data;
 
