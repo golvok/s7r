@@ -59,46 +59,45 @@ public:
 	unsigned int getAge() { return age; }
 };
 
-class Firework : public Mover<FireworkParticle> {
-public:
-	enum class State {
-		DONE,
-		FUSE_LIT,
-		EXPLODING
-	};
+enum class FireworkState {
+	DONE,
+	FUSE_LIT,
+	EXPLODING
+};
+
+class Firework : public StatefulMover<FireworkParticle,FireworkState> {
 private:
 	DECL_COPYCON_AND_ASSIGNOP(Firework)
 	Point source;
 	Point direction;
 	const unsigned int num_particles;
 	unsigned int ticks_since_lit;
-	Firework::State state;
 public:
 	Firework(Point src, unsigned int num_particles_, Point dir)
-		: source(src)
+		: StatefulMover<FireworkParticle,FireworkState>(State::DONE)
+		, source(src)
 		, direction(dir)
 		, num_particles(num_particles_)
 		, ticks_since_lit(0)
-		, state(State::DONE)
 		{
 		lightFuse();
 	}
 
 	void lightFuse() {
-		assert(state == State::DONE && "fuse lit when not done.");
-		state = State::FUSE_LIT;
+		assert(isInState(State::DONE) && "fuse lit when not done.");
+		setState(State::FUSE_LIT);
 		ticks_since_lit = 0;
 		addTarget(FireworkParticle(source, 5, num_particles));
 	}
 
 	void update(size_t ticks) override {
 		ticks_since_lit += ticks;
-		if (state == State::FUSE_LIT) {
+		if (isInState(State::FUSE_LIT)) {
 			if (ticks_since_lit > 5) {
 				for (unsigned int i = 0; i < num_particles; ++i) {
 					addTarget(FireworkParticle(source, 10 + (-3 + (rand() % 7)), i));
 				}
-				state = State::EXPLODING;
+				setState(State::EXPLODING);
 			}
 		}
 		ParticlePtrList dead;
@@ -107,7 +106,7 @@ public:
 			if (p->isDead()) {
 				dead.push_back(p);
 			} else {
-				if (state == State::EXPLODING) {
+				if (isInState(State::EXPLODING)) {
 					p->setPosition(
 						p->getPosition()
 						+ direction*(ticks)
@@ -119,13 +118,11 @@ public:
 		for (auto& p : dead) {
 			removeTarget(*p);
 		}
-		if (state == State::EXPLODING && targets.empty()) {
-			state = State::DONE;
+		if (isInState(State::EXPLODING) && targets.empty()) {
+			setState(State::DONE);
 			lightFuse();
 		}
 	}
-
-	State getState() { return state; }
 };
 
 struct TestData {

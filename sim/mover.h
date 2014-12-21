@@ -61,6 +61,34 @@ protected:
 	ParticlePtrList targets;
 };
 
+template<class ParticleType, class StateType>
+class StatefulMover : public Mover<ParticleType> {
+public:
+	typedef StateType State;
+	StatefulMover(State initial_state)
+		: Mover<ParticleType>()
+		, state(initial_state)
+		{}
+	StatefulMover(const StatefulMover& src)
+		: Mover<ParticleType>(src)
+		, state(src.getState())
+		{}
+	StatefulMover(StatefulMover&& src)
+		: Mover<ParticleType>(std::forward<Mover<ParticleType>>(src))
+		, state(src.getState())
+		{}
 
+	StatefulMover& operator=(const StatefulMover& src) {
+		Mover<ParticleType>::operator=(src);
+		state = src.state;
+	}
+
+	State getState() { return state; }
+protected:
+	void setState(State new_state) { state = new_state; }
+	bool isInState(State test_state) { return state == test_state; } 
+private:
+	State state;
+};
 
 #endif /* MOVER_H */
