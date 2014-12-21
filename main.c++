@@ -148,35 +148,33 @@ public:
 	S7RDrawer(TestData& td_) : td(td_) {}
 
 	void draw() override {
-		cairo_set_source_rgb(getContext(), 0.00, 1.00, 0.00);
-		cairo_set_line_width(getContext(),1);
+		setDrawColour(0.00, 1.00, 0.00);
+		setDrawLineWidth(1);
 		for (auto& p : td.m1->getTargets()) {
-			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
-			cairo_stroke(getContext());
+			drawCircle(p->getPosition(), 2);
 		}
 		for (auto& p : td.m2->getTargets()) {
-			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
-			cairo_stroke(getContext());
+			drawCircle(p->getPosition(), 2);
 		}
 		drawFirework(*td.f1);
 		drawFirework(*td.f2);
 	}
 
 	void drawFirework(Firework& f) {
+		setDrawLineWidth(1);
 		switch (f.getState()) {
 			case Firework::State::FUSE_LIT:
-				cairo_set_source_rgb(getContext(), 1.00, 0.70, 0.00);
+				setDrawColour(1.00, 0.70, 0.00);
 			break;
 			case Firework::State::EXPLODING:
-				cairo_set_source_rgb(getContext(), 1.00, 0.00, 0.00);
+				setDrawColour(1.00, 0.00, 0.00);
 			break;
 			default:
-				cairo_set_source_rgb(getContext(), 0.00, 0.00, 0.00);
+				setDrawColour(0.00, 0.00, 0.00);
 			break;
 		}
 		for (auto& p : f.getTargets()) {
-			cairo_arc(getContext(), p->getPosition().x, p->getPosition().y, 2, 0, 2*G_PI);
-			cairo_stroke(getContext());
+			drawCircle(p->getPosition(), 2);
 		}
 	}
 };

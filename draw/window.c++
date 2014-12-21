@@ -73,3 +73,20 @@ void Window::call_draw_function(cairo_t* cr) {
 		drawer->doDrawing(cr);
 	}
 }
+
+void DrawerObject::setDrawColour(float r, float g, float b) {
+	cairo_set_source_rgb(getContext(), r, g, b);
+}
+
+void DrawerObject::setDrawLineWidth(float w) {
+	cairo_set_line_width(getContext(), w);
+}
+
+void DrawerObject::drawCircle(Point p, float radius) {
+	cairo_arc(getContext(), p.x, p.y, radius, 0, 2*G_PI);
+	stroke();
+}
+
+void DrawerObject::stroke() {
+	cairo_stroke(getContext());
+}

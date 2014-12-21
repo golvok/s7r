@@ -5,6 +5,8 @@
 #include <gtk/gtk.h>
 #include <memory>
 
+#include "../sim/particle.h"
+
 class DrawerObject {
 public:
 	DrawerObject() : context(nullptr) {}
@@ -17,6 +19,11 @@ public:
 		context = nullptr;
 	}
 	virtual void draw() = 0;
+protected:
+	void setDrawColour(float r, float g, float b);
+	void setDrawLineWidth(float w);
+	void drawCircle(Point p, float radius);
+	void stroke();
 private:
 	DrawerObject(const DrawerObject&);
 	DrawerObject& operator=(const DrawerObject&);
