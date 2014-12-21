@@ -1,5 +1,5 @@
 #include "geometry.h"
-#include "math.h"
+#include <math.h>
 
 /******************************************
  * begin Point function definitions *

@@ -2,7 +2,7 @@
 #define PARTICLE_H
 
 #include <stdlib.h>
-#include "../util/geometry.h"
+#include <util/geometry.h>
 
 class Particle {
 public:

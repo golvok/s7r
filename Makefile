@@ -9,7 +9,8 @@ LINK_FLAGS = \
 
 INCLUDE_FLAGS = \
 	$(shell pkg-config --cflags gtk+-3.0) \
-	$(shell pkg-config --cflags cairo)
+	$(shell pkg-config --cflags cairo) \
+	-I .
 
 CFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror -std=c++11
 

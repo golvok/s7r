@@ -1,8 +1,8 @@
 #ifndef SIM_H
 #define SIM_H
 
-#include "particle.h"
-#include "mover.h"
+#include <sim/particle.h>
+#include <sim/mover.h>
 
 #include <unordered_map>
 
