@@ -1,4 +1,4 @@
-#include "particle.h"
+#include "particle.h++"
 
 void Particle::setPosition(const Point& p) {
 	this->position = p;

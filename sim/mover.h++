@@ -1,7 +1,7 @@
 #ifndef MOVER_H
 #define MOVER_H
 
-#include <sim/particle.h>
+#include <sim/particle.h++>
 
 #include <vector>
 #include <unordered_set>

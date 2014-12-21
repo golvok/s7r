@@ -5,7 +5,7 @@
 #include <gtk/gtk.h>
 #include <memory>
 
-#include <sim/particle.h>
+#include <sim/particle.h++>
 
 class DrawerObject {
 public:

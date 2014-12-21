@@ -17,7 +17,7 @@ CFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror -std=c++11
 s7r: main.o draw/window.o sim/particle.o sim/sim.o sim/mover.o util/geometry.o
 	g++ $^ -o $@ $(LINK_FLAGS)
 
-%.o: %.c++ %.h
+%.o: %.c++ %.h++
 	g++ $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
 
 %.o: %.c++

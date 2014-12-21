@@ -1,4 +1,4 @@
-#include "window.h"
+#include "window.h++"
 
 static gboolean draw_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
 	(void)widget;

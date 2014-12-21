@@ -1,4 +1,4 @@
-#include "sim.h"
+#include "sim.h++"
 #include <iostream>
 
 Sim::Sim()
