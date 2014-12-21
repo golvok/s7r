@@ -19,12 +19,12 @@ class Sim {
 public:
 	Sim();
 	bool update(size_t ticks);
-	void add(Mover& m);
+	void add(MoverInterface& m);
 private:
 	Sim& operator=(const Sim&);
 	Sim(const Sim&);
 	ParticleList particles;
-	std::vector<Mover*> movers;
+	std::vector<MoverInterface*> movers;
 };
 
 #endif /* SIM_H */

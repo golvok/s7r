@@ -1,4 +1,5 @@
 #include "sim.h"
+#include <iostream>
 
 Sim::Sim()
 	: particles()
@@ -6,7 +7,7 @@ Sim::Sim()
 
 }
 
-void Sim::add(Mover& m) {
+void Sim::add(MoverInterface& m) {
 	m.setSim(this);
 	movers.push_back(&m);
 }

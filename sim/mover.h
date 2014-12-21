@@ -9,16 +9,16 @@
 
 class Sim;
 
-class Mover {
+class MoverInterface {
 public:
-	Mover()
+	MoverInterface()
 		: attached_sim(nullptr) {}
 
-	Mover(Mover&& src)
+	MoverInterface(MoverInterface&& src)
 		: attached_sim(src.attached_sim) {}
 
 	virtual void update(size_t ticks) {(void)ticks;}
-	virtual ~Mover() {}
+	virtual ~MoverInterface() {}
 protected:
 	friend class Sim;
 
@@ -26,22 +26,22 @@ protected:
 
 	void setSim(Sim* s) {attached_sim = s;}
 
-	Mover& operator=(const Mover&);
-	Mover(const Mover&);
+	MoverInterface& operator=(const MoverInterface&);
+	MoverInterface(const MoverInterface&);
 };
 
 template<class ParticleType>
-class Mover_Impl : public Mover {
+class Mover : public MoverInterface {
 public:
 	typedef std::vector<ParticleType*> ParticlePtrList;
 	typedef std::unordered_set<ParticleType*> ParticlePtrSet;
-	Mover_Impl()
+	Mover()
 		: targets() {}
 
-	Mover_Impl(Mover_Impl&& src)
+	Mover(Mover&& src)
 		: targets(std::move(src.targets)) {}
 
-	~Mover_Impl() {
+	~Mover() {
 		while (targets.empty() == false) {
 			removeTarget(*targets.front());
 		}

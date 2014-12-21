@@ -7,11 +7,11 @@
 #include <cassert>
 #include <cstdlib>
 
-class SimpleMover : public Mover_Impl<Particle> {
+class SimpleMover : public Mover<Particle> {
 	DECL_COPYCON_AND_ASSIGNOP(SimpleMover)
 public:
 	SimpleMover(float speed_)
-		: Mover_Impl()
+		: Mover()
 		, speed(speed_)
 		, counter(0)
 		{}
@@ -59,7 +59,7 @@ public:
 	unsigned int getAge() { return age; }
 };
 
-class Firework : public Mover_Impl<FireworkParticle> {
+class Firework : public Mover<FireworkParticle> {
 public:
 	enum class State {
 		DONE,
