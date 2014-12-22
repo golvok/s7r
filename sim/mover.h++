@@ -65,8 +65,8 @@ protected:
 template<class ParticleType, class StateType>
 class StatefulMover : public Mover<ParticleType> {
 public:
-	typedef StateType State;
-	StatefulMover(State initial_state)
+	typedef StateType MoverState;
+	StatefulMover(MoverState initial_state)
 		: Mover<ParticleType>()
 		, state(initial_state)
 		{}
@@ -84,12 +84,12 @@ public:
 		state = src.state;
 	}
 
-	State getState() { return state; }
+	MoverState getState() { return state; }
 protected:
-	void setState(State new_state) { state = new_state; }
-	bool isInState(State test_state) { return state == test_state; } 
+	void setState(MoverState new_state) { state = new_state; }
+	bool isInState(MoverState test_state) { return state == test_state; }
 private:
-	State state;
+	MoverState state;
 };
 
 #endif /* MOVER_H */

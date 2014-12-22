@@ -52,7 +52,7 @@ private:
 	unsigned int ticks_since_lit;
 public:
 	Firework(Point src, unsigned int num_particles_, Point dir)
-		: StatefulMover<ParticleType,State>(State::DONE)
+		: StatefulMover<ParticleType,MoverState>(MoverState::DONE)
 		, source(src)
 		, direction(dir)
 		, num_particles(num_particles_)
@@ -62,20 +62,20 @@ public:
 	}
 
 	void lightFuse() {
-		assert(isInState(State::DONE) && "fuse lit when not done.");
-		setState(State::FUSE_LIT);
+		assert(isInState(MoverState::DONE) && "fuse lit when not done.");
+		setState(MoverState::FUSE_LIT);
 		ticks_since_lit = 0;
 		addTarget(AgingParticle(source, 5, num_particles));
 	}
 
 	void update(size_t ticks) override {
 		ticks_since_lit += ticks;
-		if (isInState(State::FUSE_LIT)) {
+		if (isInState(MoverState::FUSE_LIT)) {
 			if (ticks_since_lit > 5) {
 				for (unsigned int i = 0; i < num_particles; ++i) {
 					addTarget(AgingParticle(source, 10 + (-3 + (rand() % 7)), i));
 				}
-				setState(State::EXPLODING);
+				setState(MoverState::EXPLODING);
 			}
 		}
 		ParticlePtrList dead;
@@ -84,7 +84,7 @@ public:
 			if (p->isDead()) {
 				dead.push_back(p);
 			} else {
-				if (isInState(State::EXPLODING)) {
+				if (isInState(MoverState::EXPLODING)) {
 					p->setPosition(
 						p->getPosition()
 						+ direction*(ticks)
@@ -96,8 +96,8 @@ public:
 		for (auto& p : dead) {
 			removeTarget(*p);
 		}
-		if (isInState(State::EXPLODING) && targets.empty()) {
-			setState(State::DONE);
+		if (isInState(MoverState::EXPLODING) && targets.empty()) {
+			setState(MoverState::DONE);
 			lightFuse();
 		}
 	}
@@ -141,10 +141,10 @@ public:
 	void drawFirework(Firework& f) {
 		setDrawLineWidth(1);
 		switch (f.getState()) {
-			case Firework::State::FUSE_LIT:
+			case Firework::MoverState::FUSE_LIT:
 				setDrawColour(1.00, 0.70, 0.00);
 			break;
-			case Firework::State::EXPLODING:
+			case Firework::MoverState::EXPLODING:
 				setDrawColour(1.00, 0.00, 0.00);
 			break;
 			default:
