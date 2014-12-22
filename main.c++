@@ -37,35 +37,13 @@ private:
 	const unsigned int reset_at_count = 40;
 };
 
-class FireworkParticle : public Particle {
-private:
-	unsigned int lifetime;
-	unsigned int age;
-public:
-	FireworkParticle(Point start, unsigned int initial_lifetime, size_t id)
-		: Particle(start, id)
-		, lifetime(initial_lifetime)
-		, age(0)
-		{}
-
-	FireworkParticle(const FireworkParticle& src)
-		: Particle(src)
-		, lifetime(src.lifetime)
-		, age(src.age)
-		{}
-
-	void addToAge(unsigned int delta) { age += delta; }
-	bool isDead() { return age > lifetime; }
-	unsigned int getAge() { return age; }
-};
-
 enum class FireworkState {
 	DONE,
 	FUSE_LIT,
 	EXPLODING
 };
 
-class Firework : public StatefulMover<FireworkParticle,FireworkState> {
+class Firework : public StatefulMover<AgingParticle,FireworkState> {
 private:
 	DECL_COPYCON_AND_ASSIGNOP(Firework)
 	Point source;
@@ -74,7 +52,7 @@ private:
 	unsigned int ticks_since_lit;
 public:
 	Firework(Point src, unsigned int num_particles_, Point dir)
-		: StatefulMover<FireworkParticle,FireworkState>(State::DONE)
+		: StatefulMover<ParticleType,State>(State::DONE)
 		, source(src)
 		, direction(dir)
 		, num_particles(num_particles_)
@@ -87,7 +65,7 @@ public:
 		assert(isInState(State::DONE) && "fuse lit when not done.");
 		setState(State::FUSE_LIT);
 		ticks_since_lit = 0;
-		addTarget(FireworkParticle(source, 5, num_particles));
+		addTarget(AgingParticle(source, 5, num_particles));
 	}
 
 	void update(size_t ticks) override {
@@ -95,7 +73,7 @@ public:
 		if (isInState(State::FUSE_LIT)) {
 			if (ticks_since_lit > 5) {
 				for (unsigned int i = 0; i < num_particles; ++i) {
-					addTarget(FireworkParticle(source, 10 + (-3 + (rand() % 7)), i));
+					addTarget(AgingParticle(source, 10 + (-3 + (rand() % 7)), i));
 				}
 				setState(State::EXPLODING);
 			}

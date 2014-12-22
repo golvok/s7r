@@ -23,4 +23,26 @@ private:
 	Particle& operator=(const Particle&);
 };
 
+class AgingParticle : public Particle {
+private:
+	unsigned int lifetime;
+	unsigned int age;
+public:
+	AgingParticle(Point start, unsigned int initial_lifetime, size_t id)
+		: Particle(start, id)
+		, lifetime(initial_lifetime)
+		, age(0)
+		{}
+
+	AgingParticle(const AgingParticle& src)
+		: Particle(src)
+		, lifetime(src.lifetime)
+		, age(src.age)
+		{}
+
+	void addToAge(unsigned int delta) { age += delta; }
+	bool isDead() { return age > lifetime; }
+	unsigned int getAge() { return age; }
+};
+
 #endif /* PARTICLE_H */

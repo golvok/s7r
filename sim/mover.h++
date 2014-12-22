@@ -30,9 +30,10 @@ protected:
 	MoverInterface(const MoverInterface&);
 };
 
-template<class ParticleType>
+template<class ParticleType_>
 class Mover : public MoverInterface {
 public:
+	typedef ParticleType_ ParticleType;
 	typedef std::vector<ParticleType*> ParticlePtrList;
 	typedef std::unordered_set<ParticleType*> ParticlePtrSet;
 	Mover()
