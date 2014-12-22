@@ -87,8 +87,8 @@ public:
 				if (isInState(MoverState::EXPLODING)) {
 					p->setPosition(
 						p->getPosition()
-						+ direction*(ticks)
-						+ Point::getPerpindular(direction)*((long int)ticks*(-1 + (rand() % 3)))
+						+ direction*(ticks*(0.6 + rand()*(0.6)/RAND_MAX))
+						+ Point::getPerpindular(direction)*(ticks*(-1 + (rand()*(2.0)/RAND_MAX)))
 					);
 				}
 			}
