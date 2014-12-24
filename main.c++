@@ -103,12 +103,86 @@ public:
 	}
 };
 
+class Train : public Particle {
+private:
+	DECL_COPYCON_AND_ASSIGNOP(Train)
+public:
+	Train(std::vector<Point> path_, size_t id)
+		: Particle(path_.at(0), id)
+		, path(path_)
+		, nextPointIter(path.begin() + 1)
+		, lastPoint(path.at(0))
+		, nextPoint(path.at(1))
+		{}
+	Train(Train&& src)
+		: Particle(src)
+		, path(std::move(src.path))
+		, nextPointIter(src.nextPointIter)
+		, lastPoint(src.lastPoint)
+		, nextPoint(src.nextPoint)
+		{}
+
+	const std::vector<Point>& getPath() { return path; }
+private:
+	std::vector<Point> path;
+	std::vector<Point>::iterator nextPointIter;
+	Point lastPoint;
+	Point nextPoint;
+
+	void advancePosition() {
+		lastPoint = nextPoint;
+		++nextPointIter;
+		if (nextPointIter == path.end()) {
+			nextPointIter = path.begin();
+		}
+		nextPoint = *nextPointIter;
+	}
+
+	friend class TrainMaster;
+};
+
+class TrainMaster : public Mover<Train> {
+private:
+	DECL_COPYCON_AND_ASSIGNOP(TrainMaster)
+public:
+	TrainMaster(std::vector<std::vector<Point>>&& path_list) {
+		size_t i = 0;
+		for (auto& path : path_list) {
+			addTarget(Train(path, i));
+			++i;
+		}
+	}
+
+	void update(size_t ticks) override {
+		const float speed = 10;
+		for (Train* p : targets) {
+			float distanceFromLast = Point::distance(p->lastPoint,p->getPosition());
+			float distanceBetweenCurrentPair = Point::distance(p->lastPoint,p->nextPoint);
+			if (distanceBetweenCurrentPair < (distanceFromLast + ticks*speed)) {
+				p->advancePosition();
+				if (p->nextPointIter == p->path.begin()) {
+					p->advancePosition();
+				}
+				Point deltaFromNewLast =
+					Point::unit(Point::delta(p->lastPoint,p->nextPoint)) * (ticks*speed - (distanceBetweenCurrentPair - distanceFromLast));
+				p->setPosition(p->lastPoint + deltaFromNewLast);
+			} else {
+				Point movementVector =
+					Point::unit(Point::delta(p->lastPoint,p->nextPoint)) * (ticks*speed);
+				p->setPosition(p->getPosition() + movementVector);
+			}
+		}
+	}
+private:
+};
+
 struct TestData {
 	Sim* sim;
 	SimpleMover* m1;
 	SimpleMover* m2;
 	Firework* f1;
 	Firework* f2;
+	TrainMaster* tm1;
 };
 
 void* clicked(void* data) {
@@ -136,6 +210,7 @@ public:
 		}
 		drawFirework(*td.f1);
 		drawFirework(*td.f2);
+		drawTrains(*td.tm1);
 	}
 
 	void drawFirework(Firework& f) {
@@ -155,6 +230,26 @@ public:
 			drawCircle(p->getPosition(), 2);
 		}
 	}
+
+	void drawTrains(TrainMaster& tm) {
+		setDrawLineWidth(1);
+		for (auto& p : tm.getTargets()) {
+			setDrawColour(0.00, 0.00, 1.00);
+			for(auto pathPoint = p->getPath().begin(); pathPoint != p->getPath().end(); ++pathPoint) {
+				if (pathPoint == p->getPath().begin()) {
+					// std::cout << *pathPoint << std::endl;
+					cairo_move_to(getContext(), (*pathPoint).x, (*pathPoint).y);
+				} else {
+					// std::cout << "to " << *pathPoint << std::endl;
+					cairo_line_to(getContext(), (*pathPoint).x, (*pathPoint).y);
+				}
+				// std::cout << "end\n\n";
+			}
+			stroke();
+			setDrawColour(0.00, 0.50, 1.00);
+			drawCircle(p->getPosition(), 4);
+		}
+	}
 };
 
 int main () {
@@ -166,17 +261,27 @@ int main () {
 	td.m2 = new SimpleMover(2);
 	td.f1 = new Firework({100,250},20,{7,0});
 	td.f2 = new Firework({100,350},30,{1,-1});
+	td.tm1 = new TrainMaster({
+		{ {10, 10} , {100,100}, {100,150}, {300,150} },
+		{ {10, 110}, {100,200}, {100,250}, {300,250} },
+		{
+			{400,400}, {470.71,429.29}, {500,500}, {470.71,570.71},
+			{400,600}, {329.29,570.71}, {300,500}, {329.29,429.29},
+			{400,400}
+		},
+	});
 
 	td.sim->add(*td.m1);
 	td.sim->add(*td.m2);
 	td.sim->add(*td.f1);
 	td.sim->add(*td.f2);
+	td.sim->add(*td.tm1);
 
 	td.m1->addTarget(Particle({350,300},0));
 	td.m2->addTarget(Particle({400,300},1));
 	td.m1->addTarget(Particle({450,300},2));
 
-	Window win(800, 600, std::unique_ptr<S7RDrawer>(new S7RDrawer(td)));
+	Window win(800, 800, std::unique_ptr<S7RDrawer>(new S7RDrawer(td)));
 	win.set_click_function(clicked, &td);
 	win.loop();
 
@@ -185,6 +290,7 @@ int main () {
 	delete td.m2;
 	delete td.f1;
 	delete td.f2;
+	delete td.tm1;
 
 	return 0;
 }

@@ -212,7 +212,7 @@ float Point::distance(Point p1, Point p2) {
 }
 
 float Point::magnitude(Point p) {
-	return magnitude(p);
+	return sqrt(magnitudeSquared(p));
 }
 
 float Point::magnitudeSquared(Point p) {
