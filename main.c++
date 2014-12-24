@@ -180,9 +180,17 @@ struct TestData {
 	Sim* sim;
 	SimpleMover* m1;
 	SimpleMover* m2;
-	Firework* f1;
-	Firework* f2;
+	std::vector<Firework*> f;
 	TrainMaster* tm1;
+	TestData()
+		: sim(nullptr)
+		, m1(nullptr)
+		, m2(nullptr)
+		, f()
+		, tm1(nullptr)
+		{}
+	private:
+		DECL_COPYCON_AND_ASSIGNOP(TestData)
 };
 
 void* clicked(void* data) {
@@ -208,8 +216,9 @@ public:
 		for (auto& p : td.m2->getTargets()) {
 			drawCircle(p->getPosition(), 2);
 		}
-		drawFirework(*td.f1);
-		drawFirework(*td.f2);
+		for (Firework* fp : td.f) {
+			drawFirework(*fp);
+		}
 		drawTrains(*td.tm1);
 	}
 
@@ -259,8 +268,12 @@ int main () {
 	td.sim = new Sim();
 	td.m1 = new SimpleMover(1);
 	td.m2 = new SimpleMover(2);
-	td.f1 = new Firework({100,250},20,{7,0});
-	td.f2 = new Firework({100,350},30,{1,-1});
+	Point fireworkCenter = {150,500};
+	td.f.push_back(new Firework(fireworkCenter + Point( 2, 2), 20, { 7, 7}));
+	td.f.push_back(new Firework(fireworkCenter + Point( 2,-2), 20, { 7,-7}));
+	td.f.push_back(new Firework(fireworkCenter + Point(-2, 2), 20, {-7, 7}));
+	td.f.push_back(new Firework(fireworkCenter + Point(-2,-2), 20, {-7,-7}));
+	td.f.push_back(new Firework({100,350},30,{ 1,  0}));
 	td.tm1 = new TrainMaster({
 		{ {10, 10} , {100,100}, {100,150}, {300,150} },
 		{ {10, 110}, {100,200}, {100,250}, {300,250} },
@@ -273,8 +286,9 @@ int main () {
 
 	td.sim->add(*td.m1);
 	td.sim->add(*td.m2);
-	td.sim->add(*td.f1);
-	td.sim->add(*td.f2);
+	for (Firework* fp : td.f) {
+		td.sim->add(*fp);
+	}
 	td.sim->add(*td.tm1);
 
 	td.m1->addTarget(Particle({350,300},0));
@@ -288,8 +302,9 @@ int main () {
 	delete td.sim;
 	delete td.m1;
 	delete td.m2;
-	delete td.f1;
-	delete td.f2;
+	for (Firework* fp : td.f) {
+		delete fp;
+	}
 	delete td.tm1;
 
 	return 0;
