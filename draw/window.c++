@@ -26,8 +26,8 @@ static gboolean clicked_callback(
 
 
 Window::Window(
-	size_t width, size_t height, std::unique_ptr<DrawerObject>&& drawer_
-	):	window(nullptr)
+	size_t width, size_t height, std::unique_ptr<DrawerObject>&& drawer_)
+	:	window(nullptr)
 	,	darea(nullptr)
 	,	drawer(std::forward<std::unique_ptr<DrawerObject>>(drawer_))
 	,	click_function(nullptr)

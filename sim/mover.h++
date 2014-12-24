@@ -17,7 +17,7 @@ public:
 	MoverInterface(MoverInterface&& src)
 		: attached_sim(src.attached_sim) {}
 
-	virtual void update(size_t ticks) {(void)ticks;}
+	virtual void update(size_t ticks) = 0;
 	virtual ~MoverInterface() {}
 protected:
 	friend class Sim;
