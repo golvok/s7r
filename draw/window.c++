@@ -19,10 +19,9 @@ static gboolean clicked_callback(
 	Window* window = static_cast<Window*>(user_data);
 
 	window->call_click_function();
-
-	gtk_widget_queue_draw(widget);
 	return TRUE;
 }
+
 
 
 Window::Window(
@@ -60,6 +59,12 @@ void Window::set_click_function(void* (*click_function_)(void*), void* data) {
 
 void Window::loop() {
 	gtk_main();
+}
+
+void Window::requestRedraw() {
+	if (GTK_IS_WIDGET(darea)) {
+		gtk_widget_queue_draw(darea);
+	}
 }
 
 void Window::call_click_function() {

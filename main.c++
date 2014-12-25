@@ -6,6 +6,8 @@
 #include <memory>
 #include <cassert>
 #include <cstdlib>
+#include <thread>
+#include <chrono>
 
 class SimpleMover : public Mover<Particle> {
 	DECL_COPYCON_AND_ASSIGNOP(SimpleMover)
@@ -182,6 +184,7 @@ struct TestData {
 	SimpleMover* m2;
 	std::vector<Firework*> f;
 	TrainMaster* tm1;
+
 	TestData()
 		: sim(nullptr)
 		, m1(nullptr)
@@ -189,16 +192,24 @@ struct TestData {
 		, f()
 		, tm1(nullptr)
 		{}
-	private:
-		DECL_COPYCON_AND_ASSIGNOP(TestData)
-};
 
-void* clicked(void* data) {
-	(void)data;
-	// puts("clicked!");
-	static_cast<TestData*>(data)->sim->update(1);
-	return 0;
-}
+	TestData(const TestData& src)
+		: sim(src.sim)
+		, m1(src.m1)
+		, m2(src.m2)
+		, f(src.f)
+		, tm1(src.tm1)
+		{}
+
+	TestData& operator=(const TestData& src) {
+		sim = src.sim;
+		m1 = src.m1;
+		m2 = src.m2;
+		f = src.f;
+		tm1 = src.tm1;
+		return *this;
+	}
+};
 
 class S7RDrawer : public DrawerObject {
 	DECL_COPYCON_AND_ASSIGNOP(S7RDrawer)
@@ -261,6 +272,14 @@ public:
 	}
 };
 
+void updaterThreadFunction(TestData td, Window* win, bool* stop) {
+	while (!*stop) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		td.sim->update(1);
+		win->requestRedraw();
+	}
+}
+
 int main () {
 	srand(time(0));
 
@@ -296,8 +315,13 @@ int main () {
 	td.m1->addTarget(Particle({450,300},2));
 
 	Window win(800, 800, std::unique_ptr<S7RDrawer>(new S7RDrawer(td)));
-	win.set_click_function(clicked, &td);
+	bool stop = false;
+
+	std::thread updaterThread(updaterThreadFunction, td, &win, &stop);
 	win.loop();
+
+	stop = true;
+	updaterThread.join();
 
 	delete td.sim;
 	delete td.m1;

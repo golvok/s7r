@@ -35,6 +35,7 @@ public:
 	Window(size_t w, size_t h, std::unique_ptr<DrawerObject>&& drawer);
 	void set_click_function(void* (*click_function)(void*), void* data);
 	void loop();
+	void requestRedraw();
 
 	void call_click_function();
 	void call_draw_function(cairo_t* cr);
