@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+**/OBJ/**/*.o
 
 # Compiled Dynamic libraries
 *.so
@@ -12,5 +13,8 @@
 *.la
 *.a
 
+# Dependency Files
+**/DEPS/**/*.d
+
 # Executables
-s7r
+EXE/s7r
