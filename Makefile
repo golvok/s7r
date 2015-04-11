@@ -9,10 +9,10 @@ EXE_DIR=EXE/
 OBJ_DIR=OBJ/
 DEPS_DIR=DEPS/
 
-# CPP = clang++ -stdlib=libstdc++
-CPP = g++
+# CXX = clang++ -stdlib=libstdc++
+# CXX = g++
 
-CPPFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror -std=c++11 -ggdb
+CXXFLAGS += -Wall -Wextra -pedantic -Weffc++ -Werror -std=c++11 -ggdb
 
 LINK_FLAGS = \
 	$(shell pkg-config --libs gtk+-3.0) \
@@ -64,8 +64,8 @@ endif
 # complain with generated d
 .SECONDEXPANSION:
 $(OBJ_DIR)%.o: %.c++ | $(OBJ_DIR)$$(dir %) $(DEPS_DIR)$$(dir %)
-	$(CPP) -c  $< -o  $@ $(CPPFLAGS) $(INCLUDE_FLAGS)
-	$(CPP) -MM $< -MF $(DEPS_DIR)$<.d.tmp $(CPPFLAGS) $(INCLUDE_FLAGS)
+	$(CXX) -c  $< -o  $@ $(CXXFLAGS) $(INCLUDE_FLAGS)
+	$(CXX) -MM $< -MF $(DEPS_DIR)$<.d.tmp $(CXXFLAGS) $(INCLUDE_FLAGS)
 	@sed -e 's|.*:|$@:|' < $(DEPS_DIR)$<.d.tmp > $(DEPS_DIR)$<.d
 	@sed -e 's/.*://' -e 's/\\$$//' < $(DEPS_DIR)$<.d.tmp | fmt -1 | \
 	 sed -e 's/^ *//' -e 's/$$/:/' >> $(DEPS_DIR)$<.d
@@ -73,7 +73,7 @@ $(OBJ_DIR)%.o: %.c++ | $(OBJ_DIR)$$(dir %) $(DEPS_DIR)$$(dir %)
 
 # compile *.o's into an executable
 $(EXE_DIR)%: | $(EXE_DIR)
-	$(CPP) $^ -o $@ $(CPPFLAGS) $(LINK_FLAGS)
+	$(CXX) $^ -o $@ $(CXXFLAGS) $(LINK_FLAGS)
 
 $(DIRS):
 	mkdir -p $@
