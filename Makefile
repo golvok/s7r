@@ -27,7 +27,7 @@ INCLUDE_FLAGS = \
 .PRECIOUS: $(OBJ_DIR)%.o
 
 # define source directories
-SOURCE_DIRS = draw/ sim/ util/ .
+SOURCE_DIRS = draw/ sim/ util/ ./
 
 # compute all directories that might need creation
 DIRS=$(EXE_DIR) $(OBJ_DIR) $(DEPS_DIR) \
@@ -66,7 +66,7 @@ endif
 $(OBJ_DIR)%.o: %.c++ | $(OBJ_DIR)$$(dir %) $(DEPS_DIR)$$(dir %)
 	$(CPP) -c  $< -o  $@ $(CPPFLAGS) $(INCLUDE_FLAGS)
 	$(CPP) -MM $< -MF $(DEPS_DIR)$<.d.tmp $(CPPFLAGS) $(INCLUDE_FLAGS)
-	@sed -e 's|.*:|$(OBJ_DIR)$<.o:|' < $(DEPS_DIR)$<.d.tmp > $(DEPS_DIR)$<.d
+	@sed -e 's|.*:|$@:|' < $(DEPS_DIR)$<.d.tmp > $(DEPS_DIR)$<.d
 	@sed -e 's/.*://' -e 's/\\$$//' < $(DEPS_DIR)$<.d.tmp | fmt -1 | \
 	 sed -e 's/^ *//' -e 's/$$/:/' >> $(DEPS_DIR)$<.d
 	@rm -f $(DEPS_DIR)$<.d.tmp
